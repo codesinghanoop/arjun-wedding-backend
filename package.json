@@ -1,12 +1,14 @@
 {
-  "name": "y",
+  "name": "interactive-comments-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "mongodb backend for comments",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "server": "node --watch index.js",
+    "client": "npm run dev --prefix ../interactive-comments-react",
+    "dev": "concurrently \"npm start\" \"npm run client\""
   },
   "author": "dominique bello aka Catevika",
   "license": "ISC",
@@ -20,6 +22,7 @@
     "path": "^0.12.7"
   },
   "devDependencies": {
+    "concurrently": "^8.2.1",
     "morgan": "^1.10.0",
     "nodemon": "^3.0.1"
   }
