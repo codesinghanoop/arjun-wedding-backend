@@ -4,15 +4,19 @@ import ash from 'express-async-handler';
 
 export const router = express.Router();
 
-
 /**
  * * @desc    Get all comments
  * * @route   GET '/api/'
  * * @access  Public
  **/
 const getComments = ash(async (req, res) => {
-  const comments = await Comment.find({});
-  res.json(comments);
+  const comments = await Comment.find().populate('replies');
+  if (comments) {
+    res.json(comments);
+  } else {
+    res.status(404);
+    throw new Error('No comment found');
+  }
 });
 
 /**
@@ -21,9 +25,10 @@ const getComments = ash(async (req, res) => {
  * * @access  currentUser
  **/
 const createComment = ash(async (req, res) => {
-  const comment = new Comment({
+  const comment = Comment.create({
     content: req.body.content,
-    createdAt: "now",
+    createdAt: new Date(),
+    updatedAt: new Date(),
     score: 0,
     user: {
       image: {
@@ -36,8 +41,7 @@ const createComment = ash(async (req, res) => {
     showReplyForm: false
   });
 
-  const createdComment = await comment.save();
-  res.status(201).json(createdComment);
+  res.status(201).json(comment);
 });
 
 /**
@@ -45,11 +49,11 @@ const createComment = ash(async (req, res) => {
  * * @route   GET '/api/:id'
  * * @access  Public
  **/
-const getCommentById = ash(async (req, res) => {
-  const comment = await Comment.findById(req.params.id);
+const getComment = ash(async (req, res) => {
+  const comment = await Comment.findById(req.params.id).populate('replies');
 
   if (comment) {
-    res.json({ comment });
+    res.json(comment);
   } else {
     res.status(404);
     throw new Error('Comment not found');
@@ -57,19 +61,55 @@ const getCommentById = ash(async (req, res) => {
 });
 
 /**
- * * @desc    Update a comment
+ * * @desc    Update score
  * * @route   PUT '/api/:id'
- * * @access  currentUser
+ * * @access  Public
  **/
-const updateComment = ash(async (req, res) => {
-  const { content } = req.body;
+const updateScore = ash(async (req, res) => {
+  const commentFound = await Comment.findById(req.params.id).populate('replies');
 
-  const comment = await Comment.findById(req.params.id);
-  if (comment) {
-    comment.content = content;
+  if (commentFound) {
+    commentFound.score = req.body.score;
+    commentFound.updatedAt = new Date();
+    await commentFound.save();
+    res.json(commentFound);
+  } else {
+    res.status(404);
+    throw new Error('Comment not found');
+  }
+});
 
-    const updatedComment = await comment.save();
-    res.json(updatedComment);
+/**
+ * * @desc    ToggleShowReplyForm
+ * * @route   PUT '/api/:id/toggle'
+ * * @access  Public
+ **/
+const toggleShowReplyForm = ash(async (req, res) => {
+  const commentFound = await Comment.findById(req.params.id).populate('replies');
+
+  if (commentFound) {
+    commentFound.showReplyForm = req.body.showReplyForm;
+    await commentFound.save();
+    res.json(commentFound);
+  } else {
+    res.status(404);
+    throw new Error('Comment not found');
+  }
+});
+
+/**
+ * * @desc    EditComment
+ * * @route   PATCH '/api/:id/edit'
+ * * @access  Public
+ **/
+const editComment = ash(async (req, res) => {
+  const commentFound = await Comment.findById(req.params.id).populate('replies');
+
+  if (commentFound) {
+    commentFound.content = req.body.content;
+    commentFound.updatedAt = new Date();
+    await commentFound.save();
+    res.json(commentFound);
   } else {
     res.status(404);
     throw new Error('Comment not found');
@@ -78,24 +118,27 @@ const updateComment = ash(async (req, res) => {
 
 /**
  * * @desc    Delete a comment
- * * @route   DELETE '/api/:id'
+ * * @route   DELETE '/api/:id/delete'
  * * @access  currentUser
  **/
+
 const deleteComment = ash(async (req, res) => {
   const comment = await Comment.findByIdAndRemove(req.params.id);
 
-  if (comment) {
-    res.json('Comment removed');
-  } else {
+  if (!comment) {
     res.status(404);
     throw new Error('Comment not found');
+  } else {
+    res.status(204).json('Comment deleted');
   }
 });
 
 export {
-  getComments,
   createComment,
-  getCommentById,
-  updateComment,
+  getComments,
+  getComment,
+  updateScore,
+  toggleShowReplyForm,
+  editComment,
   deleteComment
 };

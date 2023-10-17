@@ -1,6 +1,10 @@
 import mongoose from 'mongoose';
 
-const commentSchema = new mongoose.Schema({
+const replySchema = new mongoose.Schema({
+  comment: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Comment'
+  },
   createdAt: {
     type: Date,
     required: true
@@ -15,6 +19,10 @@ const commentSchema = new mongoose.Schema({
   },
   score: {
     type: Number,
+    required: true
+  },
+  replyingTo: {
+    type: String,
     required: true
   },
   user: {
@@ -33,15 +41,10 @@ const commentSchema = new mongoose.Schema({
       required: true
     }
   },
-  replies: [ {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Reply',
-  } ],
   showReplyForm: {
     type: Boolean,
     required: true
   }
 });
 
-export const Comment = mongoose.model('Comment', commentSchema);
-
+export const Reply = mongoose.model('Reply', replySchema);
