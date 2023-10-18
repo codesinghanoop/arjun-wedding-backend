@@ -37,8 +37,8 @@ Users should be able to:
 
 ### Links
 
-- Solution URL: [Add solution URL here](https://your-solution-url.com)
-- Live Site URL: [Add live site URL here](https://your-live-site-url.com)
+- Solution URL: [https://github.com/Catevika/interactive-comments-backend](https://github.com/Catevika/interactive-comments-backend)
+- Live Site URL: [https://interactive-comments-api.onrender.com/api](https://interactive-comments-api.onrender.com/api)
 
 ## My process
 
