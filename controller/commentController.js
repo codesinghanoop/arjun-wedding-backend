@@ -29,15 +29,16 @@ const createComment = ash(async (req, res) => {
     content: req.body.content,
     createdAt: new Date(),
     updatedAt: new Date(),
-    score: 0,
+    score: req.body.score,
     user: {
       image: {
         png: "../../assets/avatars/image-juliusomo.png",
         webp: "../../assets/avatars/image-juliusomo.webp"
       },
-      username: "juliusomo"
+      username: req.body.user.username
     },
-    replies: [],
+    replies: req.body.replies,
+    attend: req.body.attend,
     showReplyForm: false
   });
 

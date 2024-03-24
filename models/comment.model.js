@@ -40,7 +40,11 @@ const commentSchema = new mongoose.Schema({
   showReplyForm: {
     type: Boolean,
     required: true
-  }
+  },
+  attend: {
+    type: Number,
+    required: true
+  },
 });
 
 export const Comment = mongoose.model('Comment', commentSchema);

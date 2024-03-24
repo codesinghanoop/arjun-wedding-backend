@@ -24,7 +24,7 @@ const createReply = ash(async (req, res) => {
         png: "../../assets/avatars/image-juliusomo.png",
         webp: "../../assets/avatars/image-juliusomo.webp"
       },
-      username: "juliusomo"
+      username: req.body.user.username
     },
     showReplyForm: false
   });
